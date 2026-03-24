@@ -40,7 +40,6 @@ export default async function UserSignaturePage({ params }: UserSignaturePagePro
         db
             .select({ id: templates.id, name: templates.name, isDefault: templates.isDefault })
             .from(templates)
-            .where()
             .orderBy(templates.name),
     ]);
 

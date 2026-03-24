@@ -87,7 +87,6 @@ export async function getOverrideFormData() {
         })
         .from(resourceItems)
         .innerJoin(resourceTypes, eq(resourceItems.resourceTypeId, resourceTypes.id))
-        .where()
         .orderBy(resourceTypes.name, resourceItems.name);
 
     return items;

@@ -51,7 +51,6 @@ export default async function RulePreviewPage({ searchParams }: PreviewPageProps
             department: users.department,
         })
         .from(users)
-        .where()
         .orderBy(users.displayName);
 
     // Resolve rules if a user is selected

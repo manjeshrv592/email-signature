@@ -46,7 +46,6 @@ export default async function SignaturePreviewPage({ searchParams }: PreviewPage
             country: users.country,
         })
         .from(users)
-        .where()
         .orderBy(users.displayName);
 
     const allTemplates = await db
@@ -56,7 +55,6 @@ export default async function SignaturePreviewPage({ searchParams }: PreviewPage
             isDefault: templates.isDefault,
         })
         .from(templates)
-        .where()
         .orderBy(templates.name);
 
     // Build signature if user selected

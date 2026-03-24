@@ -20,8 +20,7 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
     // Get total count
     const [{ total }] = await db
         .select({ total: count() })
-        .from(groups)
-        .where();
+        .from(groups);
 
     // Fetch paginated groups with member counts
     const allGroups = await db
@@ -33,7 +32,6 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
         })
         .from(groups)
         .leftJoin(userGroups, eq(userGroups.groupId, groups.id))
-        .where()
         .groupBy(groups.id, groups.name, groups.syncedAt)
         .orderBy(desc(groups.syncedAt))
         .limit(PAGE_SIZE)

@@ -48,7 +48,7 @@ export default async function DashboardPage() {
             {/* Welcome */}
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-white">
-                    Welcome back, {session.user.name?.split(" ")[0] || "Admin"}
+                    Welcome back, {session.user?.name?.split(" ")[0] || "Admin"}
                 </h1>
                 <p className="text-[#8a8f98] mt-1">
                     Manage your organization&apos;s email signatures from one place.

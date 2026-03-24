@@ -36,14 +36,12 @@ export default async function ResourceTypesPage({ searchParams }: ResourceTypesP
     // Get total count
     const [{ total }] = await db
         .select({ total: count() })
-        .from(resourceTypes)
-        .where();
+        .from(resourceTypes);
 
     // Fetch paginated resource types
     const types = await db
         .select()
         .from(resourceTypes)
-        .where()
         .orderBy(desc(resourceTypes.createdAt))
         .limit(PAGE_SIZE)
         .offset(offset);

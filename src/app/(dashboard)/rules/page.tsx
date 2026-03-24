@@ -84,16 +84,14 @@ export default async function RulesPage({ searchParams }: RulesPageProps) {
     if (groupIds.length > 0) {
         const groupRows = await db
             .select({ id: groups.id, name: groups.name })
-            .from(groups)
-            .where();
+            .from(groups);
         groupRows.forEach((g) => groupNames.set(g.id, g.name));
     }
 
     if (userIds.length > 0) {
         const userRows = await db
             .select({ id: users.id, displayName: users.displayName, email: users.email })
-            .from(users)
-            .where();
+            .from(users);
         userRows.forEach((u) => userNames.set(u.id, u.displayName || u.email));
     }
 

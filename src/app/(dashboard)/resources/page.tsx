@@ -41,7 +41,6 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
     const types = await db
         .select()
         .from(resourceTypes)
-        .where()
         .orderBy(resourceTypes.name);
 
     // If no type selected and types exist, default to first
