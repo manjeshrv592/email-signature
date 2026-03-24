@@ -1,37 +1,35 @@
 /* ═══════════════════════════════════════════════════════════════════
- * Pixora Outlook Add-in — Event-Based Signature Injection
+ * Digital Whale — Outlook Add-in (Event-Based Signature Injection)
  * ═══════════════════════════════════════════════════════════════════
  *
  * This script runs headlessly when a user composes a new email or
- * creates a new calendar appointment. It fetches the user's rendered
- * signature from the Pixora API and injects it via setSignatureAsync().
+ * creates a calendar appointment. It fetches the user's rendered
+ * signature from the API and injects it via setSignatureAsync().
  *
- * The relay server is the authoritative source of truth — this add-in
- * provides a best-effort client-side preview.
+ * Requires Mailbox requirement set 1.10+.
+ * See: https://learn.microsoft.com/office/dev/add-ins/outlook/autolaunch
  * ═══════════════════════════════════════════════════════════════════ */
 
 // ─── Configuration ──────────────────────────────────────────────────
 // IMPORTANT: Update these values before deploying.
-// API_BASE_URL should point to your Vercel deployment (no trailing slash).
+// API_BASE_URL should point to your hosted deployment (no trailing slash).
 // ADDIN_TOKEN must match the PIXORA_ADDIN_TOKEN env var on the server.
 
 var API_BASE_URL = "https://digitalwhale.vercel.app";
 var ADDIN_TOKEN = "XDW8UEvf9Ms4IotAjl50xurAyWeGrtXrwt9C90kmEDgTz5Cmpy";
 
 // ─── Office.js Initialization ───────────────────────────────────────
+// See: https://learn.microsoft.com/javascript/api/office#office-office-onready-member(1)
 
 Office.onReady(function (info) {
     if (info.host === Office.HostType.Outlook) {
-        // Runtime is ready — event handlers are registered via actions.associate below.
+        // Runtime is ready — event handlers are registered via Office.actions.associate below.
     }
 });
 
 // ─── Compose Type Mapping ───────────────────────────────────────────
-// Office.js getComposeTypeAsync returns values like:
-//   Office.MailboxEnums.ComposeType.newMail
-//   Office.MailboxEnums.ComposeType.reply
-//   Office.MailboxEnums.ComposeType.forward
-// We map these to our API's query parameter values.
+// Maps Office.js ComposeType values to our API query parameter values.
+// See: https://learn.microsoft.com/javascript/api/outlook/office.mailboxenums.composetype
 
 function mapComposeType(officeComposeType) {
     if (!officeComposeType) return "newMail";
@@ -90,6 +88,8 @@ function fetchSignature(email, composeType, callback) {
 }
 
 // ─── Apply Signature ────────────────────────────────────────────────
+// Uses setSignatureAsync (Mailbox 1.10+) to inject the signature HTML.
+// See: https://learn.microsoft.com/javascript/api/outlook/office.body#outlook-office-body-setsignatureasync-member(1)
 
 function applySignature(item, signatureHtml, callback) {
     item.body.setSignatureAsync(
@@ -98,7 +98,7 @@ function applySignature(item, signatureHtml, callback) {
         function (result) {
             if (result.status === Office.AsyncResultStatus.Failed) {
                 console.warn(
-                    "Pixora: setSignatureAsync failed —",
+                    "Digital Whale: setSignatureAsync failed —",
                     result.error.message
                 );
             }
@@ -108,6 +108,8 @@ function applySignature(item, signatureHtml, callback) {
 }
 
 // ─── Event Handler: New Message Compose ─────────────────────────────
+// Triggered by OnNewMessageCompose LaunchEvent.
+// See: https://learn.microsoft.com/office/dev/add-ins/outlook/autolaunch
 
 function onNewMessageCompose(event) {
     var item = Office.context.mailbox.item;
@@ -134,6 +136,7 @@ function onNewMessageCompose(event) {
 }
 
 // ─── Event Handler: New Appointment Organizer ───────────────────────
+// Triggered by OnNewAppointmentOrganizer LaunchEvent.
 
 function onNewAppointment(event) {
     var item = Office.context.mailbox.item;
@@ -152,7 +155,7 @@ function onNewAppointment(event) {
 function handleSignatureInjection(item, email, composeType, event) {
     fetchSignature(email, composeType, function (err, data) {
         if (err) {
-            console.warn("Pixora: Could not fetch signature —", err.message);
+            console.warn("Digital Whale: Could not fetch signature —", err.message);
             event.completed();
             return;
         }
@@ -163,20 +166,15 @@ function handleSignatureInjection(item, email, composeType, event) {
             return;
         }
 
-        // Wrap in Pixora markers so the relay server can strip it later
-        var wrappedHtml =
-            "<!-- pixora-signature-start -->" +
-            data.html +
-            "<!-- pixora-signature-end -->";
-
-        applySignature(item, wrappedHtml, function () {
+        applySignature(item, data.html, function () {
             event.completed();
         });
     });
 }
 
 // ─── Register Event Handlers ────────────────────────────────────────
-// These actionIds must match the manifest's autoRunEvents configuration.
+// These function names must match the FunctionName attributes in manifest.xml.
+// See: https://learn.microsoft.com/javascript/api/office/office.actions#office-office-actions-associate-member(1)
 
 Office.actions.associate("onNewMessageCompose", onNewMessageCompose);
 Office.actions.associate("onNewAppointment", onNewAppointment);

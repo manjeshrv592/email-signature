@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp
+  xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+  xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides"
+  xsi:type="MailApp">
+
+  <!-- Basic add-in metadata -->
+  <Id>44ba2be0-5b19-4290-bb81-052cd7247db1</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Digital Whale</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+
+  <DisplayName DefaultValue="Digital Whale Signatures" />
+  <Description DefaultValue="Automatically applies your organization's email signature when you compose a new email, reply, forward, or create a calendar invite." />
+
+  <IconUrl DefaultValue="https://digitalwhale.vercel.app/add-in/icon-color.png" />
+  <HighResolutionIconUrl DefaultValue="https://digitalwhale.vercel.app/add-in/icon-color.png" />
+  <SupportUrl DefaultValue="https://digitalwhale.vercel.app" />
+
+  <AppDomains>
+    <AppDomain>https://digitalwhale.vercel.app</AppDomain>
+  </AppDomains>
+
+  <Hosts>
+    <Host Name="Mailbox" />
+  </Hosts>
+
+  <Requirements>
+    <Sets DefaultMinVersion="1.1">
+      <Set Name="Mailbox" />
+    </Sets>
+  </Requirements>
+
+  <!-- Old schema fallback — overridden by VersionOverrides below -->
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://digitalwhale.vercel.app/add-in/commands.html" />
+        <RequestedHeight>250</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+
+  <Permissions>ReadWriteMailbox</Permissions>
+
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read" />
+  </Rule>
+
+  <DisableEntityHighlighting>true</DisableEntityHighlighting>
+
+  <!-- VersionOverrides: event-based activation -->
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
+
+      <Requirements>
+        <bt:Sets DefaultMinVersion="1.10">
+          <bt:Set Name="Mailbox" />
+        </bt:Sets>
+      </Requirements>
+
+      <Hosts>
+        <Host xsi:type="MailHost">
+          <!-- Runtime for event-based activation -->
+          <Runtimes>
+            <Runtime resid="Autorun.Url">
+              <Override type="javascript" resid="Autorun.Script" />
+            </Runtime>
+          </Runtimes>
+
+          <DesktopFormFactor>
+            <!-- Event-based activation: OnNewMessageCompose + OnNewAppointmentOrganizer -->
+            <ExtensionPoint xsi:type="LaunchEvent">
+              <LaunchEvents>
+                <LaunchEvent Type="OnNewMessageCompose" FunctionName="onNewMessageCompose" />
+                <LaunchEvent Type="OnNewAppointmentOrganizer" FunctionName="onNewAppointment" />
+              </LaunchEvents>
+              <SourceLocation resid="Autorun.Url" />
+            </ExtensionPoint>
+          </DesktopFormFactor>
+        </Host>
+      </Hosts>
+
+      <Resources>
+        <bt:Images>
+          <bt:Image id="Icon16x16" DefaultValue="https://digitalwhale.vercel.app/add-in/icon-color.png"></bt:Image>
+        </bt:Images>
+        <bt:Urls>
+          <bt:Url id="Autorun.Url" DefaultValue="https://digitalwhale.vercel.app/add-in/commands.html"></bt:Url>
+          <bt:Url id="Autorun.Script" DefaultValue="https://digitalwhale.vercel.app/add-in/commands.js"></bt:Url>
+        </bt:Urls>
+        <bt:ShortStrings>
+          <bt:String id="residStr0" DefaultValue="Digital Whale Signatures"></bt:String>
+        </bt:ShortStrings>
+        <bt:LongStrings>
+          <bt:String id="residAppDesc" DefaultValue="Automatically applies your organization's email signature when you compose a new email, reply, forward, or create a calendar invite."></bt:String>
+        </bt:LongStrings>
+      </Resources>
+
+    </VersionOverrides>
+  </VersionOverrides>
+
+</OfficeApp>
