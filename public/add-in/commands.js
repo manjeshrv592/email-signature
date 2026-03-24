@@ -15,7 +15,7 @@
 // API_BASE_URL should point to your Vercel deployment (no trailing slash).
 // ADDIN_TOKEN must match the PIXORA_ADDIN_TOKEN env var on the server.
 
-var API_BASE_URL = "https://pixora365.vercel.app";
+var API_BASE_URL = "https://digitalwhale.vercel.app";
 var ADDIN_TOKEN = "XDW8UEvf9Ms4IotAjl50xurAyWeGrtXrwt9C90kmEDgTz5Cmpy";
 
 // ─── Office.js Initialization ───────────────────────────────────────
