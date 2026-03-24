@@ -1,0 +1,95 @@
+{
+    "$schema": "https://developer.microsoft.com/json-schemas/teams/vDevPreview/MicrosoftTeams.schema.json",
+    "manifestVersion": "devPreview",
+    "version": "1.0.0",
+    "id": "44ba2be0-5b19-4290-bb81-052cd7247db1",
+    "developer": {
+        "name": "Pixora",
+        "websiteUrl": "https://pixora365.vercel.app",
+        "privacyUrl": "https://pixora365.vercel.app/privacy",
+        "termsOfUseUrl": "https://pixora365.vercel.app/terms"
+    },
+    "name": {
+        "short": "Pixora Signatures",
+        "full": "Pixora Email Signature Manager"
+    },
+    "description": {
+        "short": "Automatic email signatures",
+        "full": "Pixora automatically applies your organization's email signature when you compose a new email, reply, forward, or create a calendar invite. Signatures are managed centrally by your IT admin."
+    },
+    "icons": {
+        "outline": "icon-outline.png",
+        "color": "icon-color.png"
+    },
+    "accentColor": "#6366F1",
+    "authorization": {
+        "permissions": {
+            "resourceSpecific": [
+                {
+                    "name": "Mailbox.ReadWrite.User",
+                    "type": "Delegated"
+                }
+            ]
+        }
+    },
+    "extensions": [
+        {
+            "requirements": {
+                "scopes": [
+                    "mail"
+                ],
+                "capabilities": [
+                    {
+                        "name": "Mailbox",
+                        "minVersion": "1.10"
+                    }
+                ]
+            },
+            "runtimes": [
+                {
+                    "id": "autorun_runtime",
+                    "type": "general",
+                    "code": {
+                        "page": "https://pixora365.vercel.app/add-in/commands.html",
+                        "script": "https://pixora365.vercel.app/add-in/commands.js"
+                    },
+                    "lifetime": "short",
+                    "actions": [
+                        {
+                            "id": "onNewMessageCompose",
+                            "type": "executeFunction",
+                            "displayName": "Apply Signature"
+                        },
+                        {
+                            "id": "onNewAppointment",
+                            "type": "executeFunction",
+                            "displayName": "Apply Signature to Appointment"
+                        }
+                    ]
+                }
+            ],
+            "autoRunEvents": [
+                {
+                    "requirements": {
+                        "capabilities": [
+                            {
+                                "name": "Mailbox",
+                                "minVersion": "1.10"
+                            }
+                        ]
+                    },
+                    "events": [
+                        {
+                            "type": "newMessageComposeCreated",
+                            "actionId": "onNewMessageCompose"
+                        },
+                        {
+                            "type": "newAppointmentOrganizerCreated",
+                            "actionId": "onNewAppointment"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
